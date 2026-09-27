@@ -159,44 +159,75 @@ npm install
 
 ---
 
-## 🔧 Environment Variables
+## 🔗 Backend Configuration
 
-Create a `.env` file inside the `client` directory:
+The frontend communicates with the Express API through the `VITE_API_URL` environment variable.
+
+### Local Development
+
+Create:
+
+```text
+client/.env
+```
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-### `VITE_API_URL`
+### Production
 
-The base URL of the backend API.
-
-For example:
+For the Vercel deployment, set:
 
 ```env
-VITE_API_URL=https://your-api-domain.com/api
+VITE_API_URL=https://your-backend.vercel.app/api
 ```
 
-If this variable is not provided, the application falls back to:
+In Vercel:
 
-```text
-http://localhost:5000/api
-```
+* **Root Directory:** `client`
+* **Build Command:** `npm run build`
+* **Output Directory:** `dist`
+
+The frontend and backend are deployed as separate Vercel projects from the same GitHub repository.
 
 ---
 
-## ▶️ Development
+## 🚀 Deployment
 
-Start the Vite development server:
+### Vercel
 
-```bash
-npm run dev
+Deploy the `client` directory as a separate Vercel project.
+
+- **Root Directory:** `client`
+- **Framework:** Vite
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+
+Set:
+
+```env
+VITE_API_URL=https://your-backend.vercel.app/api
 ```
 
-The frontend will normally be available at:
+The backend is deployed separately from the `server` directory.
+
+### Deployment Architecture
 
 ```text
-http://localhost:5173
+GitHub Repository
+│
+├── client/  ──────→ Vercel Frontend
+│                    ↓
+│              React + Vite
+│                    ↓
+│              Backend API
+│                    ↓
+└── server/  ──────→ Vercel Backend
+                     ↓
+                Express API
+                     ↓
+                MongoDB Atlas
 ```
 
 ---

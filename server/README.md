@@ -87,8 +87,12 @@ server/
 │   └── utils/
 │       └── tokens.js
 │
-├── package.json
+├── api/
+│   └── index.js
+│
 ├── server.js
+├── package.json
+├── vercel.json
 └── README.md
 ```
 
@@ -865,44 +869,106 @@ Expected response:
 
 ---
 
-# ▶️ Development Workflow
+# 🚀 Deployment
 
-Start MongoDB first.
+The backend supports both local development and Vercel deployment using the same `server.js`.
 
-Then:
+### Local Development
+
+Use:
 
 ```bash
-npm install
 npm run dev
 ```
 
-The backend will connect to MongoDB and start the Express server.
+This starts Express using:
 
-Expected server URL:
-
-```text
-http://localhost:5000
+```js
+app.listen(port)
 ```
 
----
+and connects to your local MongoDB instance.
 
-# 📦 Production
-
-Run:
-
-```bash
-npm start
-```
-
-Before production deployment, make sure these environment variables are configured:
+Example:
 
 ```env
-MONGODB_URI=...
-CLIENT_URL=...
-ACCESS_TOKEN_SECRET=...
-REFRESH_TOKEN_SECRET=...
-NODE_ENV=production
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/ecommerce
+CLIENT_URL=http://localhost:5173
+ACCESS_TOKEN_SECRET=your_secret
+REFRESH_TOKEN_SECRET=your_refresh_secret
 ```
+
+### Vercel Deployment
+
+The backend is deployed as a Vercel serverless function.
+
+```text
+server/
+├── api/
+│   └── index.js
+├── src/
+├── server.js
+└── vercel.json
+```
+
+`api/index.js` exports the Express application:
+
+```js
+module.exports = require("../server");
+```
+
+`vercel.json` routes incoming requests to the Express application.
+
+Create a Vercel project with:
+
+* **Root Directory:** `server`
+
+Add these environment variables:
+
+```env
+NODE_ENV=production
+MONGODB_URI=mongodb+srv://...
+CLIENT_URL=https://your-frontend.vercel.app
+ACCESS_TOKEN_SECRET=your_access_token_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+```
+
+### MongoDB Atlas
+
+For production, use MongoDB Atlas.
+
+Set the Atlas connection string as:
+
+```env
+MONGODB_URI=mongodb+srv://...
+```
+
+Make sure your MongoDB Atlas network access allows connections from your deployed backend.
+
+### Backend URL
+
+After deployment, your API will be available at:
+
+```text
+https://your-backend.vercel.app
+```
+
+Example health check:
+
+```text
+https://your-backend.vercel.app/api/health
+```
+
+### Local and Production Support
+
+The same `server.js` supports both environments:
+
+| Environment | Express                    | Database      |
+| ----------- | -------------------------- | ------------- |
+| Development | `app.listen()`             | Local MongoDB |
+| Production  | Vercel serverless function | MongoDB Atlas |
 
 ---
 

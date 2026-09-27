@@ -132,10 +132,12 @@ For detailed documentation:
 │   │   ├── App.tsx
 │   │   ├── main.tsx
 │   │   └── styles.css
+    │
 │   ├── index.html
 │   ├── package.json
 │   ├── tsconfig.json
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   └── README.md
 │
 └── server
     ├── src
@@ -158,8 +160,13 @@ For detailed documentation:
     │   └── utils
     │       └── tokens.js
     │
+    ├── api
+    │   └── index.js
+    │
+    ├── server.js
     ├── package.json
-    └── server.js
+    ├── vercel.json
+    └── README.md
 ```
 
 ---
@@ -799,41 +806,64 @@ npm start
 
 ---
 
-# 🌐 Deployment
+# 🚀 Deployment
 
-The application consists of two deployable parts:
+The project can be deployed to Vercel as two separate projects from the same GitHub repository.
+
+### Frontend — Vercel
+
+Create a Vercel project using the repository:
+
+- **Root Directory:** `client`
+- **Framework:** Vite
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+
+Add:
+
+```env
+VITE_API_URL=https://your-backend.vercel.app/api
+```
+
+### Backend — Vercel
+
+Create another Vercel project using the same repository:
+
+* **Root Directory:** `server`
+
+The backend uses:
 
 ```text
-Frontend
-React + Vite
-      │
-      ▼
-Production frontend
-
-Backend
-Express + MongoDB
-      │
-      ▼
-REST API
+server/
+├── api/
+│   └── index.js
+├── src/
+├── server.js
+└── vercel.json
 ```
 
-Before deploying, configure the appropriate environment variables for both applications.
+`server.js` supports both local development and Vercel deployment.
 
-For the backend:
+Add these Vercel environment variables:
 
 ```env
-MONGODB_URI=...
-CLIENT_URL=...
-ACCESS_TOKEN_SECRET=...
-REFRESH_TOKEN_SECRET=...
 NODE_ENV=production
+MONGODB_URI=mongodb+srv://...
+CLIENT_URL=https://your-frontend.vercel.app
+ACCESS_TOKEN_SECRET=your_access_token_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
 ```
 
-For the frontend:
+### Database
 
-```env
-VITE_API_URL=https://your-api-domain.com/api
-```
+For deployment, use MongoDB Atlas and set the Atlas connection string as `MONGODB_URI`.
+
+### Local vs Production
+
+| Environment | Backend                    | Database      |
+| ----------- | -------------------------- | ------------- |
+| Local       | Express + `app.listen()`   | Local MongoDB |
+| Vercel      | Vercel serverless function | MongoDB Atlas |
 
 When running in production, the refresh-token cookie is configured as `secure`.
 
